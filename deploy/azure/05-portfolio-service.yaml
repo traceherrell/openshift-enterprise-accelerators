@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: portfolio-service-sa
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: portfolio-service
+    app.kubernetes.io/part-of: trading-platform
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portfolio-service
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: portfolio-service
+    app.kubernetes.io/part-of: trading-platform
+spec:
+  # Initial scale set to 3 instances; scalable to 3-5 replicas manually
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: portfolio-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: portfolio-service
+        app.kubernetes.io/part-of: trading-platform
+    spec:
+      serviceAccountName: portfolio-service-sa
+      containers:
+        - name: portfolio-service
+          image: image-registry.openshift-image-registry.svc:5000/trade-app/portfolio-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8443
+              name: https
+          envFrom:
+            - configMapRef:
+                name: trade-config
+            - secretRef:
+                name: trade-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8443
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8443
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            # Mount Azure Key Vault secrets volume when using Secrets Store CSI Driver
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "azure-keyvault-trade-secrets"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portfolio-service
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: portfolio-service
+    app.kubernetes.io/part-of: trading-platform
+spec:
+  ports:
+    - port: 8443
+      targetPort: 8443
+      name: https
+  selector:
+    app.kubernetes.io/name: portfolio-service

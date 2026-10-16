@@ -1,0 +1,56 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: payment-service
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/part-of: banking-platform
+    environment: local-crc
+spec:
+  to:
+    kind: Service
+    name: payment-service
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: trade-service
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: trade-service
+    app.kubernetes.io/part-of: trading-platform
+    environment: local-crc
+spec:
+  to:
+    kind: Service
+    name: trade-service
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: portfolio-service
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: portfolio-service
+    app.kubernetes.io/part-of: trading-platform
+    environment: local-crc
+spec:
+  to:
+    kind: Service
+    name: portfolio-service
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

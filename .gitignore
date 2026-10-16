@@ -1,0 +1,36 @@
+# Maven
+target/
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Java & IDE
+*.class
+.project
+.classpath
+.settings/
+.idea/
+*.iml
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Sensitive Credentials, Keystores & Certificates
+*.p12
+*.jks
+*.key
+*.pem
+*.crt
+.env
+.env.*
+*.local.yaml
+
+
+tasklist.md

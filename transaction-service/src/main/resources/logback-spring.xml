@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="transaction-service"/>
+    <springProperty scope="context" name="externalLogHost" source="LOGGING_EXTERNAL_HOST" defaultValue=""/>
+    <springProperty scope="context" name="externalLogPort" source="LOGGING_EXTERNAL_PORT" defaultValue="5000"/>
+    <springProperty scope="context" name="externalLogSsl" source="LOGGING_SSL_ENABLED" defaultValue="false"/>
+
+    <!-- Standard Console JSON Appender (for OpenShift Cluster Logging / Vector / Fluentd) -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"service":"${appName}","environment":"on-prem"}</customFields>
+            <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>spanId</includeMdcKeyName>
+            <includeMdcKeyName>paymentId</includeMdcKeyName>
+            <includeMdcKeyName>transactionId</includeMdcKeyName>
+        </encoder>
+    </appender>
+
+    <!-- Async Console Wrapper to ensure non-blocking log writes -->
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="CONSOLE_JSON"/>
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <!-- Optional External TCP / SSL Logstash Appender for direct Pod-to-External-Server shipping -->
+    <if condition='!property("externalLogHost").isEmpty()'>
+        <then>
+            <appender name="LOGSTASH_TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+                <destination>${externalLogHost}:${externalLogPort}</destination>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                    <customFields>{"service":"${appName}","environment":"on-prem"}</customFields>
+                </encoder>
+                <keepAliveDuration>5 minutes</keepAliveDuration>
+                <reconnectionDelay>10 seconds</reconnectionDelay>
+                <waitStrategyType>sleeping</waitStrategyType>
+                <!-- Secure SSL communication if enabled -->
+                <if condition='property("externalLogSsl").equalsIgnoreCase("true")'>
+                    <then>
+                        <ssl>
+                            <trustStore>
+                                <location>${LOGGING_TRUSTSTORE_LOCATION:-/var/run/secrets/logging/truststore.jks}</location>
+                                <password>${LOGGING_TRUSTSTORE_PASSWORD:-}</password>
+                            </trustStore>
+                        </ssl>
+                    </then>
+                </if>
+            </appender>
+
+            <appender name="ASYNC_LOGSTASH" class="ch.qos.logback.classic.AsyncAppender">
+                <appender-ref ref="LOGSTASH_TCP"/>
+                <queueSize>2048</queueSize>
+                <discardingThreshold>0</discardingThreshold>
+                <neverBlock>true</neverBlock>
+            </appender>
+        </then>
+    </if>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+    </root>
+
+</configuration>

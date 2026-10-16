@@ -1,0 +1,62 @@
+server:
+  port: 8443
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store: ${SSL_KEYSTORE_PATH:classpath:keystore.p12}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:}
+    key-store-type: PKCS12
+    key-alias: ${SSL_KEY_ALIAS:payment-service}
+
+spring:
+  application:
+    name: payment-service
+
+app:
+  security:
+    # Injected securely via Azure Key Vault Secrets Store CSI Driver at runtime
+    username: ${APP_SECURITY_USER:api-user}
+    password: ${APP_SECURITY_PASSWORD}
+    role: API_USER
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:amq-cluster-kafka-bootstrap.amq-streams.svc.cluster.local:9092}
+    topic: ${KAFKA_PAYMENTS_TOPIC:payments.v1}
+    security-protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
+    ssl-truststore-location: ${KAFKA_SSL_TRUSTSTORE_LOCATION:}
+    ssl-truststore-password: ${KAFKA_SSL_TRUSTSTORE_PASSWORD:}
+
+camel:
+  servlet:
+    mapping:
+      context-path: /api/*
+  springboot:
+    name: PaymentServiceCamelContext
+    main-run-controller: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${APP_ENVIRONMENT:on-prem}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        camel.route.policy: true
+
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    root: INFO
+    com.example: DEBUG
+    org.apache.camel: INFO
+    org.springframework.security: INFO

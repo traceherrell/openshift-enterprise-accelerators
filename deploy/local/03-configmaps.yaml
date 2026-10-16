@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/part-of: banking-platform
+    environment: local-crc
+data:
+  KAFKA_BOOTSTRAP_SERVERS: "amq-cluster-kafka-bootstrap.payment-app.svc.cluster.local:9092"
+  KAFKA_PAYMENTS_TOPIC: "payments.v1"
+  KAFKA_SECURITY_PROTOCOL: "PLAINTEXT"
+  APP_ENVIRONMENT: "local-crc"
+  SSL_ENABLED: "false"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/part-of: trading-platform
+    environment: local-crc
+data:
+  APP_SERVICES_PORTFOLIO_URL: "http://portfolio-service:8443/api/v1/portfolios"
+  APP_ENVIRONMENT: "local-crc"
+  SSL_ENABLED: "false"

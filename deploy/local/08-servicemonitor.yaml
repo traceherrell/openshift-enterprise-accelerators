@@ -1,0 +1,75 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment-service-monitor
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/part-of: banking-platform
+    environment: local-crc
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment-service
+  endpoints:
+    - port: https
+      path: /actuator/prometheus
+      scheme: HTTP
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: transaction-service-monitor
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: transaction-service
+    app.kubernetes.io/part-of: banking-platform
+    environment: local-crc
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: transaction-service
+  endpoints:
+    - port: https
+      path: /actuator/prometheus
+      scheme: HTTP
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: trade-service-monitor
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: trade-service
+    app.kubernetes.io/part-of: trading-platform
+    environment: local-crc
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trade-service
+  endpoints:
+    - port: https
+      path: /actuator/prometheus
+      scheme: HTTP
+      interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: portfolio-service-monitor
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: portfolio-service
+    app.kubernetes.io/part-of: trading-platform
+    environment: local-crc
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: portfolio-service
+  endpoints:
+    - port: https
+      path: /actuator/prometheus
+      scheme: HTTP
+      interval: 15s

@@ -1,0 +1,37 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: payment-service-route
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/part-of: banking-platform
+spec:
+  to:
+    kind: Service
+    name: payment-service
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: transaction-service-route
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: transaction-service
+    app.kubernetes.io/part-of: banking-platform
+spec:
+  to:
+    kind: Service
+    name: transaction-service
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

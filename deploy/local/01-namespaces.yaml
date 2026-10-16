@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: payment-app
+  labels:
+    app.kubernetes.io/part-of: banking-platform
+    environment: local-crc
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: trade-app
+  labels:
+    app.kubernetes.io/part-of: trading-platform
+    environment: local-crc

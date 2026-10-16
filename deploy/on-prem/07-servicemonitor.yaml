@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment-service-monitor
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/part-of: banking-platform
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment-service
+  endpoints:
+    - port: https
+      path: /actuator/prometheus
+      scheme: HTTPS
+      tlsConfig:
+        insecureSkipVerify: true
+      interval: 15s
+      scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: transaction-service-monitor
+  namespace: payment-app
+  labels:
+    app.kubernetes.io/name: transaction-service
+    app.kubernetes.io/part-of: banking-platform
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: transaction-service
+  endpoints:
+    - port: https
+      path: /actuator/prometheus
+      scheme: HTTPS
+      tlsConfig:
+        insecureSkipVerify: true
+      interval: 15s
+      scrapeTimeout: 10s
