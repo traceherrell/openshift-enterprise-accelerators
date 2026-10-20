@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.13</version>
         <relativePath/>
     </parent>
 
@@ -19,7 +17,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <camel.version>4.8.0</camel.version>
+        <camel.version>4.8.5</camel.version>
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
     </properties>
 
