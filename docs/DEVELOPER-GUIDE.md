@@ -17,30 +17,43 @@ Ensure your local development workstation is equipped with:
 
 ## 2. Codebase Structure
 
-The repository separates the four autonomous microservices at the root directory from environment manifests consolidated under `deploy/`:
+Each of the four microservices lives in its own top-level project wrapper folder containing its root `Dockerfile`, Maven source directory, and OpenShift/ARO `deployment/` manifests:
 
 ```
-├── payment-service/          # Banking: Payment REST Ingestion & Kafka Producer
-├── transaction-service/      # Banking: AMQ Streams Kafka Settlement Consumer
-├── trade-service/            # Trading: Equities Order REST & Inter-Service Producer
-├── portfolio-service/        # Trading: Portfolio & Positions REST Provider
+├── On-Prem-Microservice-1/                # Banking Microservice 1 (On-Premises OCP)
+│   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
+│   ├── payment-service/                   # Payment REST Ingestion & Kafka Producer source
+│   └── deployment/                        # OpenShift manifests & Grafana dashboard
 │
-├── deploy/                   # Declarative Deployment Manifests
-│   ├── local/                # OpenShift Local (CRC) automation & ephemeral manifests
-│   ├── on-prem/              # On-Premises OCP manifests & Grafana dashboard
-│   └── azure/                # Azure Red Hat OpenShift (ARO) manifests & Grafana dashboard
+├── On-Prem-Microservice-2/                # Banking Microservice 2 (On-Premises OCP)
+│   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
+│   ├── transaction-service/               # AMQ Streams Kafka Settlement Consumer source
+│   └── deployment/                        # OpenShift manifests & Grafana dashboard
 │
-├── azure-keyvault/           # Azure Key Vault Unified Secrets Automation
-│   ├── setup-azure-keyvault.sh # Zero-credential provisioning script
-│   └── README.md             # Multi-cloud secrets architecture guide
+├── ARO-Microservice-1/                    # Trading Microservice 1 (Azure Red Hat OpenShift)
+│   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
+│   ├── portfolio-service/                 # Portfolio & Positions REST Provider source
+│   └── deployment/                        # ARO manifests & Grafana dashboard
 │
-├── docs/                     # Authoritative Central Documentation Hub
-│   ├── ARCHITECTURE.md       # Full architecture, component flows, & diagrams
-│   ├── DEVELOPER-GUIDE.md    # Developer build, test, scaling, & template guide
-│   ├── AZURE-KEY-VAULT-SECRETS.md # Unified Azure Key Vault secrets procedure
-│   ├── CERTIFICATE-MANAGEMENT.md  # HTTPS, Ingress TLS, & certificate rotation
-│   ├── OBSERVABILITY-AND-DASHBOARDS.md # OpenTelemetry, Prometheus & Grafana
-│   └── LOCAL-CRC-DEPLOYMENT.md    # Local CRC setup and developer verification
+├── ARO-Microservice-2/                    # Trading Microservice 2 (Azure Red Hat OpenShift)
+│   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
+│   ├── trade-service/                     # Equities Order REST & Inter-Service Producer source
+│   └── deployment/                        # ARO manifests & Grafana dashboard
+│
+├── deploy/
+│   └── local/                             # OpenShift Local (CRC) full-stack automation & test scripts
+│
+├── azure-keyvault/                        # Azure Key Vault Unified Secrets Automation
+│   ├── setup-azure-keyvault.sh            # Zero-credential provisioning script
+│   └── README.md                          # Multi-cloud secrets architecture guide
+│
+├── docs/                                  # Authoritative Central Documentation Hub
+│   ├── ARCHITECTURE.md                    # Full architecture, component flows, & diagrams
+│   ├── DEVELOPER-GUIDE.md                 # Developer build, test, scaling, & template guide
+│   ├── AZURE-KEY-VAULT-SECRETS.md         # Unified Azure Key Vault secrets procedure
+│   ├── CERTIFICATE-MANAGEMENT.md          # HTTPS, Ingress TLS, & certificate rotation
+│   ├── OBSERVABILITY-AND-DASHBOARDS.md    # OpenTelemetry, Prometheus & Grafana
+│   └── LOCAL-CRC-DEPLOYMENT.md            # Local CRC setup and developer verification
 │
 └── README.md
 ```
@@ -54,13 +67,23 @@ From the repository root, compile all microservices or run individually:
 
 ```bash
 # Compile all microservices
-mvn clean package -DskipTests -f payment-service/pom.xml
-mvn clean package -DskipTests -f transaction-service/pom.xml
-mvn clean package -DskipTests -f trade-service/pom.xml
-mvn clean package -DskipTests -f portfolio-service/pom.xml
+mvn clean package -DskipTests -f On-Prem-Microservice-1/payment-service/pom.xml
+mvn clean package -DskipTests -f On-Prem-Microservice-2/transaction-service/pom.xml
+mvn clean package -DskipTests -f ARO-Microservice-1/portfolio-service/pom.xml
+mvn clean package -DskipTests -f ARO-Microservice-2/trade-service/pom.xml
 ```
 
-### 3.2 Running Locally with Azure Key Vault Credentials
+### 3.2 Building Container Images
+Each wrapper directory (`On-Prem-Microservice-1`, `ARO-Microservice-1`, etc.) serves as the container build context with a root `Dockerfile`:
+
+```bash
+podman build -t payment-service:1.0.0 On-Prem-Microservice-1/
+podman build -t transaction-service:1.0.0 On-Prem-Microservice-2/
+podman build -t portfolio-service:1.0.0 ARO-Microservice-1/
+podman build -t trade-service:1.0.0 ARO-Microservice-2/
+```
+
+### 3.3 Running Locally with Azure Key Vault Credentials
 You can pull runtime credentials directly from Azure Key Vault into your terminal session:
 
 ```bash
@@ -71,7 +94,7 @@ export APP_SECURITY_USER=$(az keyvault secret show --vault-name "$KEYVAULT_NAME"
 export APP_SECURITY_PASSWORD=$(az keyvault secret show --vault-name "$KEYVAULT_NAME" --name "payment-api-password" --query value -o tsv)
 
 # Run Payment Service locally
-cd payment-service
+cd On-Prem-Microservice-1/payment-service
 mvn spring-boot:run
 ```
 
@@ -204,13 +227,14 @@ oc get pods -n trade-app
 
 Follow these steps to create a new microservice based on this reference architecture:
 
-1. **Clone an Existing Service Directory**:
+1. **Clone an Existing Microservice Wrapper Directory**:
    ```bash
-   cp -r payment-service settlement-service
-   cd settlement-service
+   cp -r On-Prem-Microservice-1 On-Prem-Microservice-3
+   mv On-Prem-Microservice-3/payment-service On-Prem-Microservice-3/settlement-service
+   cd On-Prem-Microservice-3
    ```
-2. **Update Maven Identifiers in `pom.xml`**:
-   Update `<artifactId>` to `settlement-service` and `<name>` to `Settlement Service`.
+2. **Update Maven Identifiers in `settlement-service/pom.xml` & `Dockerfile`**:
+   Update `<artifactId>` to `settlement-service`, `<name>` to `Settlement Service`, and update the `COPY` path in `Dockerfile` to `settlement-service/target/settlement-service-*.jar`.
 3. **Customize Application Configuration (`application.yml`)**:
    Update `spring.application.name` and any domain-specific properties:
    ```yaml
@@ -235,5 +259,5 @@ Follow these steps to create a new microservice based on this reference architec
        }
    }
    ```
-5. **Add OpenShift Deployment Manifest**:
-   Copy [`deploy/on-prem/04-payment-service.yaml`](../deploy/on-prem/04-payment-service.yaml), update names and labels, and reference the shared Azure Key Vault `SecretProviderClass`.
+5. **Update OpenShift Deployment Manifests**:
+   Customize the manifests in `deployment/` (such as [`On-Prem-Microservice-1/deployment/04-payment-service.yaml`](../On-Prem-Microservice-1/deployment/04-payment-service.yaml)), updating names and labels while referencing the shared Azure Key Vault `SecretProviderClass`.

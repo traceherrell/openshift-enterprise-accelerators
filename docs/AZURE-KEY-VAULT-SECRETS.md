@@ -106,7 +106,7 @@ On-Premises clusters communicate with Azure Key Vault over outbound HTTPS (port 
      --from-literal=clientsecret="<SP_CLIENT_SECRET>" \
      -n payment-app
    ```
-4. **Reference in `SecretProviderClass`** ([`deploy/on-prem/02-secret-provider-class.yaml`](../deploy/on-prem/02-secret-provider-class.yaml)).
+4. **Reference in `SecretProviderClass`** ([`On-Prem-Microservice-1/deployment/02-secret-provider-class.yaml`](../On-Prem-Microservice-1/deployment/02-secret-provider-class.yaml)).
 
 ### 3.2 Azure Red Hat OpenShift (Managed Identity / Workload Identity)
 On ARO, Azure-native User-Assigned Managed Identity (UAMI) eliminates static credentials:
@@ -123,7 +123,7 @@ On ARO, Azure-native User-Assigned Managed Identity (UAMI) eliminates static cre
      --assignee "$UAMI_CLIENT_ID" \
      --scope "$KEYVAULT_ID"
    ```
-3. **Reference in `SecretProviderClass`** ([`deploy/azure/02-secret-provider-class.yaml`](../deploy/azure/02-secret-provider-class.yaml)).
+3. **Reference in `SecretProviderClass`** ([`ARO-Microservice-1/deployment/02-secret-provider-class.yaml`](../ARO-Microservice-1/deployment/02-secret-provider-class.yaml)).
 
 ---
 

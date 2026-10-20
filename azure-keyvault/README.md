@@ -65,12 +65,12 @@ Both On-Premises and ARO clusters utilize the **Secrets Store CSI Driver** with 
 
 ### 3.1 ARO Cluster Connection (Managed Identity)
 - **Authentication**: ARO nodes leverage Azure User-Assigned Managed Identity (`useVMManagedIdentity: "true"`).
-- **Manifest**: [`deploy/azure/02-secret-provider-class.yaml`](../deploy/azure/02-secret-provider-class.yaml)
+- **Manifest**: [`ARO-Microservice-1/deployment/02-secret-provider-class.yaml`](../ARO-Microservice-1/deployment/02-secret-provider-class.yaml)
 - **OpenShift Secret**: Automatically synchronizes secrets into `trade-secrets` in namespace `trade-app`.
 
 ### 3.2 On-Premises OpenShift Connection (Service Principal or Workload Identity)
 - **Authentication**: On-prem nodes authenticate to Azure Key Vault via outbound HTTPS (port 443) using an Azure Entra ID Service Principal or Workload Identity federation.
-- **Manifest**: [`deploy/on-prem/02-secret-provider-class.yaml`](../deploy/on-prem/02-secret-provider-class.yaml)
+- **Manifest**: [`On-Prem-Microservice-1/deployment/02-secret-provider-class.yaml`](../On-Prem-Microservice-1/deployment/02-secret-provider-class.yaml)
 - **OpenShift Secret**: Automatically synchronizes secrets into `app-secrets` in namespace `payment-app`.
 
 ---

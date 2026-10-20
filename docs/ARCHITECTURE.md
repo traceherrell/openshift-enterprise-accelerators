@@ -9,7 +9,7 @@ This document establishes the authoritative architecture, integration patterns, 
 | Capability | On-Premises Banking Platform | ARO Equities Trading Platform |
 | :--- | :--- | :--- |
 | **Domain** | Payment Ingestion & Settlement | Equities Order Routing & Holdings |
-| **Microservices** | [`payment-service`](../payment-service) & [`transaction-service`](../transaction-service) | [`trade-service`](../trade-service) & [`portfolio-service`](../portfolio-service) |
+| **Microservices** | [`payment-service`](../On-Prem-Microservice-1/payment-service) & [`transaction-service`](../On-Prem-Microservice-2/transaction-service) | [`portfolio-service`](../ARO-Microservice-1/portfolio-service) & [`trade-service`](../ARO-Microservice-2/trade-service) |
 | **Namespaces** | `payment-app` | `trade-app` |
 | **Runtime & Language** | Java 21 LTS, Spring Boot 3.4.0, Apache Camel 4.8.0 DSL | Java 21 LTS, Spring Boot 3.4.0, Apache Camel 4.8.0 DSL |
 | **Interconnection Pattern** | Asynchronous Event-Driven via **AMQ Streams (Kafka)** | Synchronous REST via **Apache Camel HTTP component** |

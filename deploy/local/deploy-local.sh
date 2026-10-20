@@ -52,10 +52,10 @@ oc apply -f "$SCRIPT_DIR/04-kafka-ephemeral.yaml"
 
 # 5. Compile JARs locally with Maven
 echo "==> Compiling microservice JAR packages locally..."
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/payment-service/pom.xml" -q
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/transaction-service/pom.xml" -q
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/portfolio-service/pom.xml" -q
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/trade-service/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/On-Prem-Microservice-1/payment-service/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/On-Prem-Microservice-2/transaction-service/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/ARO-Microservice-1/portfolio-service/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/ARO-Microservice-2/trade-service/pom.xml" -q
 echo "[+] All JAR packages compiled successfully."
 
 # 6. Build and Deploy Images via OpenShift Binary BuildConfig
@@ -86,12 +86,12 @@ build_service() {
 }
 
 # Build Banking services
-build_service "payment-service" "payment-app" "$WORKSPACE_ROOT/payment-service"
-build_service "transaction-service" "payment-app" "$WORKSPACE_ROOT/transaction-service"
+build_service "payment-service" "payment-app" "$WORKSPACE_ROOT/On-Prem-Microservice-1"
+build_service "transaction-service" "payment-app" "$WORKSPACE_ROOT/On-Prem-Microservice-2"
 
 # Build Trading services
-build_service "portfolio-service" "trade-app" "$WORKSPACE_ROOT/portfolio-service"
-build_service "trade-service" "trade-app" "$WORKSPACE_ROOT/trade-service"
+build_service "portfolio-service" "trade-app" "$WORKSPACE_ROOT/ARO-Microservice-1"
+build_service "trade-service" "trade-app" "$WORKSPACE_ROOT/ARO-Microservice-2"
 
 # 7. Deploy Applications and Routes
 echo "-------------------------------------------------------------------"

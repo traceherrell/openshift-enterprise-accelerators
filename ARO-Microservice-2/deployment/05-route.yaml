@@ -1,0 +1,18 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: trade-service-route
+  namespace: trade-app
+  labels:
+    app.kubernetes.io/name: trade-service
+    app.kubernetes.io/part-of: trading-platform
+spec:
+  to:
+    kind: Service
+    name: trade-service
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

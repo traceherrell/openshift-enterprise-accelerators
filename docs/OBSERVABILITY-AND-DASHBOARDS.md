@@ -70,8 +70,8 @@ Each microservice is instrumented with **Micrometer Prometheus Registry** and **
 
 OpenShift User Workload Monitoring automatically scrapes microservices using declarative CoreOS `ServiceMonitor` custom resources:
 
-- **On-Premises**: [`deploy/on-prem/07-servicemonitor.yaml`](../deploy/on-prem/07-servicemonitor.yaml)
-- **ARO**: [`deploy/azure/07-servicemonitor.yaml`](../deploy/azure/07-servicemonitor.yaml)
+- **On-Premises**: [`On-Prem-Microservice-1/deployment/06-servicemonitor.yaml`](../On-Prem-Microservice-1/deployment/06-servicemonitor.yaml) & [`On-Prem-Microservice-2/deployment/06-servicemonitor.yaml`](../On-Prem-Microservice-2/deployment/06-servicemonitor.yaml)
+- **ARO**: [`ARO-Microservice-1/deployment/06-servicemonitor.yaml`](../ARO-Microservice-1/deployment/06-servicemonitor.yaml) & [`ARO-Microservice-2/deployment/06-servicemonitor.yaml`](../ARO-Microservice-2/deployment/06-servicemonitor.yaml)
 - **Local CRC**: [`deploy/local/08-servicemonitor.yaml`](../deploy/local/08-servicemonitor.yaml)
 
 ### Sample ServiceMonitor Manifest
@@ -101,10 +101,10 @@ spec:
 Two production-ready Grafana dashboard definitions are included:
 
 1. **Banking Platform Dashboard**:
-   - Location: [`deploy/on-prem/grafana/banking-platform-dashboard.json`](../deploy/on-prem/grafana/banking-platform-dashboard.json)
+   - Location: [`On-Prem-Microservice-1/deployment/grafana/banking-platform-dashboard.json`](../On-Prem-Microservice-1/deployment/grafana/banking-platform-dashboard.json)
    - Visualizes: Payment ingestion rate, Kafka settlement throughput, Camel consumer latency, JVM memory pools, and HTTP 5xx error rates.
 2. **Trading Platform Dashboard**:
-   - Location: [`deploy/azure/grafana/trading-platform-dashboard.json`](../deploy/azure/grafana/trading-platform-dashboard.json)
+   - Location: [`ARO-Microservice-1/deployment/grafana/trading-platform-dashboard.json`](../ARO-Microservice-1/deployment/grafana/trading-platform-dashboard.json)
    - Visualizes: Equity trade execution rate, inter-service HTTP call latency to `portfolio-service`, portfolio read volume, and JVM GC pauses.
 
 ---
@@ -118,8 +118,8 @@ To import dashboards into your existing Grafana environment:
 3. **Import Dashboard JSON**:
    - In Grafana, click the **+** (Create) icon in the sidebar and select **Import**.
    - Click **Upload JSON file** and select either:
-     - `deploy/on-prem/grafana/banking-platform-dashboard.json`
-     - `deploy/azure/grafana/trading-platform-dashboard.json`
+     - `On-Prem-Microservice-1/deployment/grafana/banking-platform-dashboard.json`
+     - `ARO-Microservice-1/deployment/grafana/trading-platform-dashboard.json`
    - Select your Prometheus datasource from the dropdown.
    - Click **Import**.
 

@@ -1,27 +1,6 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: trade-service-monitor
-  namespace: trade-app
-  labels:
-    app.kubernetes.io/name: trade-service
-    app.kubernetes.io/part-of: trading-platform
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: trade-service
-  endpoints:
-    - port: https
-      path: /actuator/prometheus
-      scheme: HTTPS
-      tlsConfig:
-        insecureSkipVerify: true
-      interval: 15s
-      scrapeTimeout: 10s
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
   name: portfolio-service-monitor
   namespace: trade-app
   labels:
