@@ -12,17 +12,16 @@
 On-Prem-Microservice-2/
 ├── Dockerfile                                      # Red Hat UBI 9 OpenJDK 21 container build definition
 ├── README.md                                       # Service documentation
-├── transaction-service/                            # Maven project & Java 21 source code
-│   ├── pom.xml                                     # Spring Boot 3.4 & Apache Camel 4.8 dependencies
-│   └── src/main/
-│       ├── java/com/example/onprem/transaction/
-│       │   ├── TransactionServiceApplication.java  # Spring Boot entrypoint
-│       │   ├── config/SecurityConfig.java          # HTTP Basic Auth & Actuator security configuration
-│       │   ├── dto/                                # PaymentEvent & TransactionRecord records
-│       │   └── routes/TransactionRouteBuilder.java # Camel Kafka consumer & settlement route
-│       └── resources/
-│           ├── application.yml                     # Externalized app, Kafka, TLS & Actuator config
-│           └── logback-spring.xml                  # Asynchronous JSON structured logging
+├── pom.xml                                         # Spring Boot 3.4.13 & Apache Camel 4.8.5 dependencies
+├── src/main/
+│   ├── java/com/example/onprem/transaction/
+│   │   ├── TransactionServiceApplication.java      # Spring Boot entrypoint
+│   │   ├── config/SecurityConfig.java              # HTTP Basic Auth & Actuator security configuration
+│   │   ├── dto/                                    # PaymentEvent & TransactionRecord records
+│   │   └── routes/TransactionRouteBuilder.java     # Camel Kafka consumer & settlement route
+│   └── resources/
+│       ├── application.yml                         # Externalized app, Kafka, TLS & Actuator config
+│       └── logback-spring.xml                      # Asynchronous JSON structured logging
 └── deployment/                                     # Declarative OpenShift manifests & observability
     ├── 01-namespace.yaml                           # OpenShift namespace (payment-app)
     ├── 02-secret-provider-class.yaml               # Azure Key Vault CSI SecretProviderClass
@@ -58,7 +57,7 @@ On-Prem-Microservice-2/
 From the `On-Prem-Microservice-2` directory:
 
 ```bash
-mvn clean package -DskipTests -f transaction-service/pom.xml
+mvn clean package -DskipTests
 ```
 
 ### 3.2 Build the Container Image

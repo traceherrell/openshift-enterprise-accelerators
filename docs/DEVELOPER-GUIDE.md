@@ -17,27 +17,31 @@ Ensure your local development workstation is equipped with:
 
 ## 2. Codebase Structure
 
-Each of the four microservices lives in its own top-level project wrapper folder containing its root `Dockerfile`, Maven source directory, and OpenShift/ARO `deployment/` manifests:
+Each of the four microservices lives in its own top-level project wrapper folder using standard Maven layout (`Dockerfile`, `pom.xml`, `src/`, and `deployment/` at the root of each microservice project):
 
 ```
-├── On-Prem-Microservice-1/                # Banking Microservice 1 (On-Premises OCP)
+├── On-Prem-Microservice-1/                # Banking Microservice 1: payment-service (On-Premises OCP)
 │   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
-│   ├── payment-service/                   # Payment REST Ingestion & Kafka Producer source
+│   ├── pom.xml                            # Spring Boot 3.4.13 & Apache Camel 4.8.5 POM
+│   ├── src/                               # Payment REST Ingestion & Kafka Producer source
 │   └── deployment/                        # OpenShift manifests & Grafana dashboard
 │
-├── On-Prem-Microservice-2/                # Banking Microservice 2 (On-Premises OCP)
+├── On-Prem-Microservice-2/                # Banking Microservice 2: transaction-service (On-Premises OCP)
 │   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
-│   ├── transaction-service/               # AMQ Streams Kafka Settlement Consumer source
+│   ├── pom.xml                            # Spring Boot 3.4.13 & Apache Camel 4.8.5 POM
+│   ├── src/                               # AMQ Streams Kafka Settlement Consumer source
 │   └── deployment/                        # OpenShift manifests & Grafana dashboard
 │
-├── ARO-Microservice-1/                    # Trading Microservice 1 (Azure Red Hat OpenShift)
+├── ARO-Microservice-1/                    # Trading Microservice 1: portfolio-service (ARO)
 │   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
-│   ├── portfolio-service/                 # Portfolio & Positions REST Provider source
+│   ├── pom.xml                            # Spring Boot 3.4.13 & Apache Camel 4.8.5 POM
+│   ├── src/                               # Portfolio & Positions REST Provider source
 │   └── deployment/                        # ARO manifests & Grafana dashboard
 │
-├── ARO-Microservice-2/                    # Trading Microservice 2 (Azure Red Hat OpenShift)
+├── ARO-Microservice-2/                    # Trading Microservice 2: trade-service (ARO)
 │   ├── Dockerfile                         # Root UBI9 OpenJDK 21 container build definition
-│   ├── trade-service/                     # Equities Order REST & Inter-Service Producer source
+│   ├── pom.xml                            # Spring Boot 3.4.13 & Apache Camel 4.8.5 POM
+│   ├── src/                               # Equities Order REST & Inter-Service Producer source
 │   └── deployment/                        # ARO manifests & Grafana dashboard
 │
 ├── deploy/
@@ -67,10 +71,10 @@ From the repository root, compile all microservices or run individually:
 
 ```bash
 # Compile all microservices
-mvn clean package -DskipTests -f On-Prem-Microservice-1/payment-service/pom.xml
-mvn clean package -DskipTests -f On-Prem-Microservice-2/transaction-service/pom.xml
-mvn clean package -DskipTests -f ARO-Microservice-1/portfolio-service/pom.xml
-mvn clean package -DskipTests -f ARO-Microservice-2/trade-service/pom.xml
+mvn clean package -DskipTests -f On-Prem-Microservice-1/pom.xml
+mvn clean package -DskipTests -f On-Prem-Microservice-2/pom.xml
+mvn clean package -DskipTests -f ARO-Microservice-1/pom.xml
+mvn clean package -DskipTests -f ARO-Microservice-2/pom.xml
 ```
 
 ### 3.2 Building Container Images
@@ -94,7 +98,7 @@ export APP_SECURITY_USER=$(az keyvault secret show --vault-name "$KEYVAULT_NAME"
 export APP_SECURITY_PASSWORD=$(az keyvault secret show --vault-name "$KEYVAULT_NAME" --name "payment-api-password" --query value -o tsv)
 
 # Run Payment Service locally
-cd On-Prem-Microservice-1/payment-service
+cd On-Prem-Microservice-1
 mvn spring-boot:run
 ```
 
@@ -230,11 +234,10 @@ Follow these steps to create a new microservice based on this reference architec
 1. **Clone an Existing Microservice Wrapper Directory**:
    ```bash
    cp -r On-Prem-Microservice-1 On-Prem-Microservice-3
-   mv On-Prem-Microservice-3/payment-service On-Prem-Microservice-3/settlement-service
    cd On-Prem-Microservice-3
    ```
-2. **Update Maven Identifiers in `settlement-service/pom.xml` & `Dockerfile`**:
-   Update `<artifactId>` to `settlement-service`, `<name>` to `Settlement Service`, and update the `COPY` path in `Dockerfile` to `settlement-service/target/settlement-service-*.jar`.
+2. **Update Maven Identifiers in `pom.xml` & `Dockerfile`**:
+   Update `<artifactId>` to `settlement-service`, `<name>` to `Settlement Service`, and update the `COPY` path in `Dockerfile` to `target/settlement-service-*.jar`.
 3. **Customize Application Configuration (`application.yml`)**:
    Update `spring.application.name` and any domain-specific properties:
    ```yaml

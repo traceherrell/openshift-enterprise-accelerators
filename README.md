@@ -6,27 +6,31 @@ This repository delivers production-grade reference implementations, containeriz
 
 ## Workspace Structure
 
-Each microservice is structured in its own self-contained project folder containing its root `Dockerfile`, source code directory, and `deployment/` manifests:
+Each microservice is structured in its own self-contained standard Maven project directory containing its root `Dockerfile`, `pom.xml`, `src/`, and `deployment/` manifests:
 
 ```
-├── On-Prem-Microservice-1/   # On-Premises Microservice 1 (Payment Ingestion & Producer)
+├── On-Prem-Microservice-1/   # On-Premises Microservice 1: payment-service (Payment Ingestion & Producer)
 │   ├── Dockerfile            # Root UBI 9 OpenJDK 21 container build definition
-│   ├── payment-service/      # Spring Boot 3.4 & Apache Camel 4.8 Maven project
+│   ├── pom.xml               # Spring Boot 3.4.13 & Apache Camel 4.8.5 Maven project
+│   ├── src/                  # Java 21 source & unit tests
 │   └── deployment/           # OpenShift manifests, Route, ServiceMonitor & Grafana
 │
-├── On-Prem-Microservice-2/   # On-Premises Microservice 2 (Kafka Settlement Consumer)
+├── On-Prem-Microservice-2/   # On-Premises Microservice 2: transaction-service (Kafka Settlement Consumer)
 │   ├── Dockerfile            # Root UBI 9 OpenJDK 21 container build definition
-│   ├── transaction-service/  # Spring Boot 3.4 & Apache Camel 4.8 Maven project
+│   ├── pom.xml               # Spring Boot 3.4.13 & Apache Camel 4.8.5 Maven project
+│   ├── src/                  # Java 21 source & unit tests
 │   └── deployment/           # OpenShift manifests, Route, ServiceMonitor & Grafana
 │
-├── ARO-Microservice-1/       # ARO Microservice 1 (Portfolio & Holdings Provider)
+├── ARO-Microservice-1/       # ARO Microservice 1: portfolio-service (Portfolio & Holdings Provider)
 │   ├── Dockerfile            # Root UBI 9 OpenJDK 21 container build definition
-│   ├── portfolio-service/    # Spring Boot 3.4 & Apache Camel 4.8 Maven project
+│   ├── pom.xml               # Spring Boot 3.4.13 & Apache Camel 4.8.5 Maven project
+│   ├── src/                  # Java 21 source & unit tests
 │   └── deployment/           # ARO manifests, Route, ServiceMonitor & Grafana
 │
-├── ARO-Microservice-2/       # ARO Microservice 2 (Equities Order & Camel HTTP Producer)
+├── ARO-Microservice-2/       # ARO Microservice 2: trade-service (Equities Order & Camel HTTP Producer)
 │   ├── Dockerfile            # Root UBI 9 OpenJDK 21 container build definition
-│   ├── trade-service/        # Spring Boot 3.4 & Apache Camel 4.8 Maven project
+│   ├── pom.xml               # Spring Boot 3.4.13 & Apache Camel 4.8.5 Maven project
+│   ├── src/                  # Java 21 source & unit tests
 │   └── deployment/           # ARO manifests, Route, ServiceMonitor & Grafana
 │
 ├── deploy/
@@ -55,8 +59,8 @@ Each microservice is structured in its own self-contained project folder contain
 | Capability | On-Premises Implementation (`On-Prem-Microservice-1` & `2`) | ARO Implementation (`ARO-Microservice-1` & `2`) |
 | :--- | :--- | :--- |
 | **Domain** | Banking: Payments & Transaction Settlement | Banking: Equities Trade & Portfolio Management |
-| **Microservices** | [`payment-service`](On-Prem-Microservice-1/payment-service) & [`transaction-service`](On-Prem-Microservice-2/transaction-service) | [`portfolio-service`](ARO-Microservice-1/portfolio-service) & [`trade-service`](ARO-Microservice-2/trade-service) |
-| **Runtime & Framework** | Java 21, Spring Boot 3.4.0, Apache Camel 4.8.0 DSL | Java 21, Spring Boot 3.4.0, Apache Camel 4.8.0 DSL |
+| **Microservices** | [`payment-service`](On-Prem-Microservice-1) & [`transaction-service`](On-Prem-Microservice-2) | [`portfolio-service`](ARO-Microservice-1) & [`trade-service`](ARO-Microservice-2) |
+| **Runtime & Framework** | Java 21, Spring Boot 3.4.13, Apache Camel 4.8.5 DSL | Java 21, Spring Boot 3.4.13, Apache Camel 4.8.5 DSL |
 | **Interconnection** | Event-Driven via AMQ Streams (Kafka topic `payments.v1`) | Synchronous REST via Apache Camel HTTP component |
 | **REST Security** | Spring Security HTTP Basic Auth (secret-driven) | Spring Security HTTP Basic Auth (secret-driven) |
 | **HTTPS / TLS** | OpenShift Edge TLS Route & Container TLS | ARO Ingress Edge TLS Route & Container TLS |

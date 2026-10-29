@@ -52,10 +52,10 @@ oc apply -f "$SCRIPT_DIR/04-kafka-ephemeral.yaml"
 
 # 5. Compile JARs locally with Maven
 echo "==> Compiling microservice JAR packages locally..."
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/On-Prem-Microservice-1/payment-service/pom.xml" -q
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/On-Prem-Microservice-2/transaction-service/pom.xml" -q
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/ARO-Microservice-1/portfolio-service/pom.xml" -q
-mvn clean package -DskipTests -f "$WORKSPACE_ROOT/ARO-Microservice-2/trade-service/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/On-Prem-Microservice-1/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/On-Prem-Microservice-2/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/ARO-Microservice-1/pom.xml" -q
+mvn clean package -DskipTests -f "$WORKSPACE_ROOT/ARO-Microservice-2/pom.xml" -q
 echo "[+] All JAR packages compiled successfully."
 
 # 6. Build and Deploy Images via OpenShift Binary BuildConfig

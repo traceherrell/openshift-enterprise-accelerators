@@ -9,9 +9,9 @@ This document establishes the authoritative architecture, integration patterns, 
 | Capability | On-Premises Banking Platform | ARO Equities Trading Platform |
 | :--- | :--- | :--- |
 | **Domain** | Payment Ingestion & Settlement | Equities Order Routing & Holdings |
-| **Microservices** | [`payment-service`](../On-Prem-Microservice-1/payment-service) & [`transaction-service`](../On-Prem-Microservice-2/transaction-service) | [`portfolio-service`](../ARO-Microservice-1/portfolio-service) & [`trade-service`](../ARO-Microservice-2/trade-service) |
+| **Microservices** | [`payment-service`](../On-Prem-Microservice-1) & [`transaction-service`](../On-Prem-Microservice-2) | [`portfolio-service`](../ARO-Microservice-1) & [`trade-service`](../ARO-Microservice-2) |
 | **Namespaces** | `payment-app` | `trade-app` |
-| **Runtime & Language** | Java 21 LTS, Spring Boot 3.4.0, Apache Camel 4.8.0 DSL | Java 21 LTS, Spring Boot 3.4.0, Apache Camel 4.8.0 DSL |
+| **Runtime & Language** | Java 21 LTS, Spring Boot 3.4.13, Apache Camel 4.8.5 DSL | Java 21 LTS, Spring Boot 3.4.13, Apache Camel 4.8.5 DSL |
 | **Interconnection Pattern** | Asynchronous Event-Driven via **AMQ Streams (Kafka)** | Synchronous REST via **Apache Camel HTTP component** |
 | **External Security** | Spring Security HTTP Basic Auth (CSI-injected credentials) | Spring Security HTTP Basic Auth (CSI-injected credentials) |
 | **Secrets Engine** | **Azure Key Vault** via Secrets Store CSI Driver (Service Principal) | **Azure Key Vault** via Secrets Store CSI Driver (Managed Identity) |

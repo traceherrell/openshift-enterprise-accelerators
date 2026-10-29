@@ -12,17 +12,16 @@
 ARO-Microservice-2/
 ├── Dockerfile                                # Red Hat UBI 9 OpenJDK 21 container build definition
 ├── README.md                                 # Service documentation
-├── trade-service/                            # Maven project & Java 21 source code
-│   ├── pom.xml                               # Spring Boot 3.4 & Apache Camel 4.8 dependencies
-│   └── src/main/
-│       ├── java/com/example/aro/trade/
-│       │   ├── TradeServiceApplication.java  # Spring Boot entrypoint
-│       │   ├── config/SecurityConfig.java    # HTTP Basic Auth & Actuator security configuration
-│       │   ├── dto/                          # TradeRequest, TradeResponse & PortfolioPosition records
-│       │   └── routes/TradeRouteBuilder.java # Camel REST DSL & HTTP producer route
-│       └── resources/
-│           ├── application.yml               # Externalized app, portfolio URL, TLS & Actuator config
-│           └── logback-spring.xml            # Asynchronous JSON structured logging
+├── pom.xml                                   # Spring Boot 3.4.13 & Apache Camel 4.8.5 dependencies
+├── src/main/
+│   ├── java/com/example/aro/trade/
+│   │   ├── TradeServiceApplication.java      # Spring Boot entrypoint
+│   │   ├── config/SecurityConfig.java        # HTTP Basic Auth & Actuator security configuration
+│   │   ├── dto/                              # TradeRequest, TradeResponse & PortfolioPosition records
+│   │   └── routes/TradeRouteBuilder.java     # Camel REST DSL & HTTP producer route
+│   └── resources/
+│       ├── application.yml                   # Externalized app, portfolio URL, TLS & Actuator config
+│       └── logback-spring.xml                # Asynchronous JSON structured logging
 └── deployment/                               # Declarative ARO manifests & observability
     ├── 01-namespace.yaml                     # OpenShift namespace (trade-app)
     ├── 02-secret-provider-class.yaml         # Azure Key Vault CSI SecretProviderClass (Managed Identity)
@@ -57,7 +56,7 @@ ARO-Microservice-2/
 From the `ARO-Microservice-2` directory:
 
 ```bash
-mvn clean package -DskipTests -f trade-service/pom.xml
+mvn clean package -DskipTests
 ```
 
 ### 3.2 Build the Container Image
